@@ -87,7 +87,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 endif()
 
 # we require C++11 without extensions
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF CACHE BOOL "Use compiler extensions")
 
@@ -207,6 +207,7 @@ set(STANDARD_PACKAGES
   SCAFACOS
   SHOCK
   SMTBQ
+  SMARTSIM
   SPH
   SPIN
   SRD
@@ -235,6 +236,17 @@ if(PKG_ADIOS)
   enable_language(C)
   find_package(ADIOS2 REQUIRED)
   target_link_libraries(lammps PRIVATE adios2::adios2)
+endif()
+
+if(PKG_SMARTSIM)
+
+  find_library(SR smartredis PATHS
+               ${CMAKE_SOURCE_DIR}/../../SmartRedis/install/lib NO_DEFAULT_PATH REQUIRED)
+
+  set(SR_PATH ${CMAKE_SOURCE_DIR}/../../SmartRedis/install/)
+  target_link_libraries(lammps PRIVATE ${SR})
+  include_directories(${SR_PATH}/include)
+
 endif()
 
 if(NOT CMAKE_CROSSCOMPILING)
