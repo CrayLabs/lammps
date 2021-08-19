@@ -136,6 +136,7 @@ namespace LAMMPS_NS {
    private:
     //new functions
     void allocate(const std::vector<std::string> &);//called after reading element list, but before reading the rest of the potential
+    void deallocate();
     void read_file(char *);//read potential file
     void read_atom_types(std::vector<std::string>,char*,int);
     void read_fpe(std::vector<std::string>,std::vector<std::string>,char*,int);//fingerprints per element. Count total fingerprints defined for each 1st element in element combinations
@@ -149,9 +150,9 @@ namespace LAMMPS_NS {
     void read_screening(std::vector<std::string>,std::vector<std::string>,char*,int);
     void read_mass(const std::vector<std::string> &, const std::vector<std::string> &,const char*,int);
     bool check_potential();//after finishing reading potential file
-    void propagateforward(double *,double **,double **,int,int);//called by compute to get force and energy
-    void propagateforwardspin(double *,double **,double **,double**,int,int);//called by compute to get force and energy
-    void screen(int,int,int);
+    void propagateforward(double *,double **,int,int);//called by compute to get force and energy
+    void propagateforwardspin(double *,double **,double**,int,int);//called by compute to get force and energy
+    void screening(int,int,int);
     void cull_neighbor_list(int *,int,int);
     void screen_neighbor_list(int *);
   };
