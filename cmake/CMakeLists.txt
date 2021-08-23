@@ -245,11 +245,11 @@ if(PKG_ADIOS)
 endif()
 
 if(PKG_SMARTSIM)
-
+  
   find_library(SR smartredis PATHS
-               ${CMAKE_SOURCE_DIR}/../../SmartRedis/install/lib NO_DEFAULT_PATH REQUIRED)
+               ${CMAKE_SOURCE_DIR}/../../../SmartRedis/install/lib NO_DEFAULT_PATH REQUIRED)
 
-  set(SR_PATH ${CMAKE_SOURCE_DIR}/../../SmartRedis/install/)
+  set(SR_PATH ${CMAKE_SOURCE_DIR}/../../../SmartRedis/install/)
   target_link_libraries(lammps PRIVATE ${SR})
   include_directories(${SR_PATH}/include)
 
