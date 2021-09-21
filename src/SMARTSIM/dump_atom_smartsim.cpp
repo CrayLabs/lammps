@@ -65,7 +65,7 @@ void DumpAtomSmartSim::write()
 
   /* Construct SmartRedis Client object
   */
-  SmartRedis::Client client(false);
+  SmartRedis::Client client(true);
 
   /* Construct DataSet object with unique
   name based on user prefix, MPI rank, and
