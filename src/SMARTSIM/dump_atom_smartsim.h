@@ -37,6 +37,7 @@ protected:
     virtual void write();
     virtual void init_style();
 private:
+  SmartRedis::Client* _client;
   std::string _make_dataset_key();
   template <typename T>
   void _pack_buf_into_array(T* data, int length,

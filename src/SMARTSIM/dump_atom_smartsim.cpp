@@ -30,12 +30,28 @@ using namespace LAMMPS_NS;
 DumpAtomSmartSim::DumpAtomSmartSim(LAMMPS *lmp, int narg, char **arg)
     : DumpAtom(lmp, narg, arg)
 {
+  SmartRedis::Client* client = NULL;
+  this->_client = NULL;
+    try {
+        Client* client = new Client(true);
+        this->_client = client;
+    }
+    catch(std::exception& e) {
+        throw std::runtime_error(e.what());
+    }
+    catch(...) {
+        throw std::runtime_error("A non-standard exception "\
+                                 "was encountered during SmartRedis client "\
+                                 "construction.");
+    }
 }
 
 /* ---------------------------------------------------------------------- */
 
 DumpAtomSmartSim::~DumpAtomSmartSim()
 {
+  if(this->_client != NULL)
+    delete this->_client;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -62,10 +78,6 @@ void DumpAtomSmartSim::write()
     boxyz = domain->yz;
   }
 
-
-  /* Construct SmartRedis Client object
-  */
-  SmartRedis::Client client(true);
 
   /* Construct DataSet object with unique
   name based on user prefix, MPI rank, and
@@ -181,7 +193,7 @@ void DumpAtomSmartSim::write()
 
     /* Send the DataSet to the SmartSim experiment database
     */
-    client.put_dataset(dataset);
+    this->_client->put_dataset(dataset);
 
     /* Free temporary memory needed to preprocess LAMMPS output
     */
