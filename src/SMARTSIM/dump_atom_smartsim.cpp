@@ -28,30 +28,15 @@
 using namespace LAMMPS_NS;
 
 DumpAtomSmartSim::DumpAtomSmartSim(LAMMPS *lmp, int narg, char **arg)
-    : DumpAtom(lmp, narg, arg)
+    : DumpAtom(lmp, narg, arg),
+      _client(_use_cluster())
 {
-  SmartRedis::Client* client = NULL;
-  this->_client = NULL;
-    try {
-        Client* client = new Client(true);
-        this->_client = client;
-    }
-    catch(std::exception& e) {
-        throw std::runtime_error(e.what());
-    }
-    catch(...) {
-        throw std::runtime_error("A non-standard exception "\
-                                 "was encountered during SmartRedis client "\
-                                 "construction.");
-    }
 }
 
 /* ---------------------------------------------------------------------- */
 
 DumpAtomSmartSim::~DumpAtomSmartSim()
 {
-  if(this->_client != NULL)
-    delete this->_client;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -77,7 +62,6 @@ void DumpAtomSmartSim::write()
     boxxz = domain->xz;
     boxyz = domain->yz;
   }
-
 
   /* Construct DataSet object with unique
   name based on user prefix, MPI rank, and
@@ -193,7 +177,7 @@ void DumpAtomSmartSim::write()
 
     /* Send the DataSet to the SmartSim experiment database
     */
-    this->_client->put_dataset(dataset);
+    this->_client.put_dataset(dataset);
 
     /* Free temporary memory needed to preprocess LAMMPS output
     */
@@ -242,4 +226,25 @@ void DumpAtomSmartSim::_pack_buf_into_array(T* data, int length,
   for(int i = start_pos; i < length; i+=stride) {
     data[c++] = buf[i];
   }
+}
+
+bool DumpAtomSmartSim::_use_cluster()
+{
+    char* use_cluster = std::getenv("SMARTREDIS_USE_CLUSTER");
+
+    // If the environment variable is not present, return false
+    if (use_cluster == NULL)
+        return false;
+
+    // Convert the environment variable value to lowercase
+    char* c = use_cluster;
+    while((*c)!=0) {
+        (*c) = std::tolower(*c);
+        c++;
+    }
+
+    if(std::strcmp(use_cluster, "true")==0)
+        return true;
+
+    return false;
 }
