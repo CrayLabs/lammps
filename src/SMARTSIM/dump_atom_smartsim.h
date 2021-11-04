@@ -37,11 +37,24 @@ protected:
     virtual void write();
     virtual void init_style();
 private:
-  SmartRedis::Client* _client;
-  std::string _make_dataset_key();
-  template <typename T>
-  void _pack_buf_into_array(T* data, int length,
-			    int start_pos, int stride);
+
+    // SmartRedis client object
+    SmartRedis::Client _client;
+
+    // Function to create a SmartRedis Dataset key
+    // to prevent key collisions
+    std::string _make_dataset_key();
+
+    // Function to take LAMMPS data structure and
+    // convert to array suitable for storage
+    template <typename T>
+    void _pack_buf_into_array(T* data, int length,
+	               		      int start_pos, int stride);
+
+    // Function to read an environment variable to
+    // determine if a cluster is being used
+    bool _use_cluster();
+
 };
 }
 
