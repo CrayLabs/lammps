@@ -39,7 +39,7 @@ protected:
 private:
 
     // SmartRedis client object
-    SmartRedis::Client _client;
+    SmartRedis::Client* _client;
 
     // Function to create a SmartRedis Dataset key
     // to prevent key collisions

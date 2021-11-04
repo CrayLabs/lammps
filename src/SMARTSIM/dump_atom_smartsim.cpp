@@ -28,15 +28,30 @@
 using namespace LAMMPS_NS;
 
 DumpAtomSmartSim::DumpAtomSmartSim(LAMMPS *lmp, int narg, char **arg)
-    : DumpAtom(lmp, narg, arg),
-      _client(_use_cluster())
+    : DumpAtom(lmp, narg, arg)
 {
+    SmartRedis::Client* client = NULL;
+    this->_client = NULL;
+    try {
+        client = new Client(_use_cluster());
+        this->_client = client;
+    }
+    catch(std::exception& e) {
+        throw std::runtime_error(e.what());
+    }
+    catch(...) {
+        throw std::runtime_error("A non-standard exception "\
+                                 "was encountered during SmartRedis client "\
+                                 "construction.");
+    }
 }
 
 /* ---------------------------------------------------------------------- */
 
 DumpAtomSmartSim::~DumpAtomSmartSim()
 {
+    if(this->_client != NULL)
+        delete this->_client;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -177,7 +192,7 @@ void DumpAtomSmartSim::write()
 
     /* Send the DataSet to the SmartSim experiment database
     */
-    this->_client.put_dataset(dataset);
+    this->_client->put_dataset(dataset);
 
     /* Free temporary memory needed to preprocess LAMMPS output
     */
@@ -238,12 +253,12 @@ bool DumpAtomSmartSim::_use_cluster()
 
     // Convert the environment variable value to lowercase
     char* c = use_cluster;
-    while((*c)!=0) {
+    while ((*c) != 0) {
         (*c) = std::tolower(*c);
         c++;
     }
 
-    if(std::strcmp(use_cluster, "true")==0)
+    if (std::strcmp(use_cluster, "true") == 0)
         return true;
 
     return false;
