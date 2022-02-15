@@ -88,31 +88,31 @@ void DumpAtomSmartSim::write()
   /* Add a "domain" metadata field to the DataSet to hold information
   about the simulation domain.
   */
-  dataset.add_meta_scalar("domain", &(domain->boxlo[0]), SmartRedis::MetaDataType::dbl);
-  dataset.add_meta_scalar("domain", &(domain->boxhi[0]), SmartRedis::MetaDataType::dbl);
-  dataset.add_meta_scalar("domain", &(domain->boxlo[1]), SmartRedis::MetaDataType::dbl);
-  dataset.add_meta_scalar("domain", &(domain->boxhi[1]), SmartRedis::MetaDataType::dbl);
-  dataset.add_meta_scalar("domain", &(domain->boxlo[2]), SmartRedis::MetaDataType::dbl);
-  dataset.add_meta_scalar("domain", &(domain->boxhi[2]), SmartRedis::MetaDataType::dbl);
+  dataset.add_meta_scalar("domain", &(domain->boxlo[0]), SRMetadataTypeDouble);
+  dataset.add_meta_scalar("domain", &(domain->boxhi[0]), SRMetadataTypeDouble);
+  dataset.add_meta_scalar("domain", &(domain->boxlo[1]), SRMetadataTypeDouble);
+  dataset.add_meta_scalar("domain", &(domain->boxhi[1]), SRMetadataTypeDouble);
+  dataset.add_meta_scalar("domain", &(domain->boxlo[2]), SRMetadataTypeDouble);
+  dataset.add_meta_scalar("domain", &(domain->boxhi[2]), SRMetadataTypeDouble);
 
   /* Add a "triclinic" metadata field to the DataSet to indicate
   if the triclinic boolean is true in the simulation.
   */
-  dataset.add_meta_scalar("triclinic", &(domain->triclinic), SmartRedis::MetaDataType::int64);
+  dataset.add_meta_scalar("triclinic", &(domain->triclinic), SRMetadataTypeInt64);
 
   /* If the triclinic boolean is true, add triclinic metadata
   fields to the DataSet.
   */
   if(domain->triclinic) {
-    dataset.add_meta_scalar("triclinic_xy", &(domain->xy), SmartRedis::MetaDataType::dbl);
-    dataset.add_meta_scalar("triclinic_xz", &(domain->xz), SmartRedis::MetaDataType::dbl);
-    dataset.add_meta_scalar("triclinic_yz", &(domain->yz), SmartRedis::MetaDataType::dbl);
+    dataset.add_meta_scalar("triclinic_xy", &(domain->xy), SRMetadataTypeDouble);
+    dataset.add_meta_scalar("triclinic_xz", &(domain->xz), SRMetadataTypeDouble);
+    dataset.add_meta_scalar("triclinic_yz", &(domain->yz), SRMetadataTypeDouble);
   }
 
   /* Add a "scale_flag" metadata field ot the DataSet to indicate
   if the simulation scale_flag is true or false.
   */
-  dataset.add_meta_scalar("scale_flag", &scale_flag, SmartRedis::MetaDataType::int64);
+  dataset.add_meta_scalar("scale_flag", &scale_flag, SRMetadataTypeInt64);
 
   /* Perform internal LAMMPS output preprocessing.
   */
@@ -148,47 +148,47 @@ void DumpAtomSmartSim::write()
     //Add atom ID tensor to the DataSet
     this->_pack_buf_into_array<int64_t>(data_int, buf_len, 0, n_cols);
     dataset.add_tensor("atom_id", data_int, tensor_length,
-                       SmartRedis::TensorType::int64, SmartRedis::MemoryLayout::contiguous);
+                       SRTensorTypeInt64, SRMemLayoutContiguous);
 
     //Add atom type tensor to the DataSet
     this->_pack_buf_into_array<int64_t>(data_int, buf_len, 1, n_cols);
     dataset.add_tensor("atom_type", data_int, tensor_length,
-                       SmartRedis::TensorType::int64, SmartRedis::MemoryLayout::contiguous);
+                       SRTensorTypeInt64, SRMemLayoutContiguous);
 
     //Add atom x position  tensor to the DataSet
     this->_pack_buf_into_array<double>(data_dbl, buf_len, 2, n_cols);
     dataset.add_tensor("atom_x", data_dbl, tensor_length,
-                       SmartRedis::TensorType::dbl, SmartRedis::MemoryLayout::contiguous);
+                       SRTensorTypeDouble, SRMemLayoutContiguous);
 
     //Add atom y position  tensor to the DataSet
     this->_pack_buf_into_array<double>(data_dbl, buf_len, 3, n_cols);
     dataset.add_tensor("atom_y", data_dbl, tensor_length,
-                       SmartRedis::TensorType::dbl, SmartRedis::MemoryLayout::contiguous);
+                       SRTensorTypeDouble, SRMemLayoutContiguous);
 
     //Add atom z position tensor to the DataSet
     this->_pack_buf_into_array<double>(data_dbl, buf_len, 4, n_cols);
     dataset.add_tensor("atom_z", data_dbl, tensor_length,
-                       SmartRedis::TensorType::dbl, SmartRedis::MemoryLayout::contiguous);
+                       SRTensorTypeDouble, SRMemLayoutContiguous);
 
     /*Add "image_flag" metadata field to the DataSet to indicate
     if the image_flag boolean is true of false in the simulation.
     */
-    dataset.add_meta_scalar("image_flag", &image_flag, SmartRedis::MetaDataType::int64);
+    dataset.add_meta_scalar("image_flag", &image_flag, SRMetadataTypeInt64);
     if (image_flag == 1) {
       //Add atom ix image tensor to the DataSet
       this->_pack_buf_into_array<int64_t>(data_int, buf_len, 5, n_cols);
       dataset.add_tensor("atom_ix", data_int, tensor_length,
-                         SmartRedis::TensorType::int64, SmartRedis::MemoryLayout::contiguous);
+                         SRTensorTypeInt64, SRMemLayoutContiguous);
 
       //Add atom iy image tensor to the DataSet
       this->_pack_buf_into_array<int64_t>(data_int, buf_len, 6, n_cols);
       dataset.add_tensor("atom_iy", data_int, tensor_length,
-                         SmartRedis::TensorType::int64, SmartRedis::MemoryLayout::contiguous);
+                         SRTensorTypeInt64, SRMemLayoutContiguous);
 
       //Add atom iz image tensor to the DataSet
       this->_pack_buf_into_array<int64_t>(data_int, buf_len, 7, n_cols);
       dataset.add_tensor("atom_iz", data_int, tensor_length,
-                         SmartRedis::TensorType::int64, SmartRedis::MemoryLayout::contiguous);
+                         SRTensorTypeInt64, SRMemLayoutContiguous);
     }
 
     /* Send the DataSet to the SmartSim experiment database
