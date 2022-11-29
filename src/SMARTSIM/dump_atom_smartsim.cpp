@@ -195,6 +195,11 @@ void DumpAtomSmartSim::write()
     */
     this->_client->put_dataset(dataset);
 
+    /* Add the DataSet to an aggregation list for easier post-processing
+    */
+    this->_client->append_to_list(_make_list_key(), dataset);
+
+
     /* Free temporary memory needed to preprocess LAMMPS output
     */
     delete[] data_int;
@@ -231,6 +236,13 @@ std::string DumpAtomSmartSim::_make_dataset_key()
   std::string key = prefix + "_rank_" + std::to_string(rank) +
     "_tstep_" + std::to_string(update->ntimestep);
   return key;
+}
+
+std::string DumpAtomSmartSim::_make_list_key()
+{
+  // create database key using the var_name
+
+  return "tstep_" + std::to_string(update->ntimestep);
 }
 
 template <typename T>

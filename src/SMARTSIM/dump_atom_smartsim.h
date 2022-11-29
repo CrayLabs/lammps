@@ -39,6 +39,7 @@ protected:
 private:
   SmartRedis::Client* _client;
   std::string _make_dataset_key();
+  std::string _make_list_key();
   template <typename T>
   void _pack_buf_into_array(T* data, int length,
 			    int start_pos, int stride);
